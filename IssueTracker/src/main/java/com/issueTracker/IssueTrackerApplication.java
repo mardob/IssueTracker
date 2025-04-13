@@ -31,7 +31,7 @@ public class IssueTrackerApplication implements CommandLineRunner {
 				" List of valid Statuses is: %s", VALID_STATUS_LIST);
 
 		if(Strings.isBlank(spreadsheetId)){
-			System.out.println("Please read Readme and configure the application before use, SpreadsheetId not configured in application.properties");
+			System.out.printf(ERROR_MESSAGE_INITIAL_CONFIG, "SpreadsheetId not configured in application.properties\n");
 			return;
 		}
 

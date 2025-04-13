@@ -14,6 +14,7 @@ public class ValidationUtil {
     final static public String ERROR_MESSAGE_ID_NOT_FOUND = "%s provided [%s] not found\n";
     final static public String ERROR_MESSAGE_FIRST_PARAM = "First parameter must be one of the supported actions [CREATE, UPDATE, LIST]";
     final static public String ERROR_MESSAGE_NUMBER_OF_PARAMS = "Incorrect number of inputs. %s";
+    final static public String ERROR_MESSAGE_INITIAL_CONFIG = "Please read Readme and configure the application before use. %s";
 
     public static boolean isValidStatus(Status status){
         if(Objects.isNull(status)){

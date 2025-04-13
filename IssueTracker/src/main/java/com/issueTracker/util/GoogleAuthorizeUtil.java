@@ -10,6 +10,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+
+import static com.issueTracker.util.ValidationUtil.ERROR_MESSAGE_INITIAL_CONFIG;
 
 @Component
 public class GoogleAuthorizeUtil {
@@ -37,6 +40,11 @@ public class GoogleAuthorizeUtil {
         }
         GoogleClientSecrets clientSecrets =
                 GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+        if(Strings.isBlank(clientSecrets.getDetails().getClientId())
+                || Strings.isBlank(clientSecrets.getDetails().getClientSecret())){
+            System.out.printf(ERROR_MESSAGE_INITIAL_CONFIG, "Client ID or Client Secret are not configured in googleApiSecrets.json\n");
+        }
 
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
