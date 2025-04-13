@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public interface TicketRepository {
+public interface IssueRepository {
 
     void createIssue(String description, String parentIssueId);
 
-    void updateIssue(String id, Status status);
+    void updateIssue(Integer id, Status status);
 
     List<Issue> getAllIssues();
 }

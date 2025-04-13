@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import static com.issueTracker.util.ValidationUtil.*;
 
 @SpringBootApplication
 public class IssueTrackerApplication implements CommandLineRunner {
@@ -20,33 +21,30 @@ public class IssueTrackerApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
-        final String ERROR_MESSAGE_FIRST_PARAM = "First parameter must be one of the supported actions [CREATE, UPDATE, LIST]";
+		final String ERROR_MESSAGE_UPDATE_INPUT_INVALID = String.format("Update requires [Existing Issue id] " +
+				"of the Issue to be updated and [Status] to update this Issue to." +
+				" List of valid Statuses is: %s", VALID_STATUS_LIST);
 
-		//Check overall number of arguments
-        if(args.length < 2 || args.length > 3 ){
-			System.out.printf("Need correct number of inputs. %s", ERROR_MESSAGE_FIRST_PARAM);
+
+		if(isInvalidNumberOfInputs(args) || isNotValidActionToPerform(args)){
 			return;
 		}
-
-		//Check and populate the first argument
 		ApplicationAction applicationAction = ApplicationAction.findByName(args[0]);
-		if(applicationAction == null) {
-			System.out.println(ERROR_MESSAGE_FIRST_PARAM);
-			return;
-		}
 
 		if(applicationAction == ApplicationAction.LIST){
-			issueTrackerService.getAllIssues(Status.findByName(args[1]));
-		}
-
-		if(applicationAction == ApplicationAction.CREATE){
-			issueTrackerService.createIssue(args[1], args[2]);
-		}
-
-		if(applicationAction == ApplicationAction.UPDATE){
+			Status inputStatus = Status.findByName(args[1]);
+			issueTrackerService.getAllIssues(inputStatus);
+		} else if(applicationAction == ApplicationAction.CREATE){
+			String parentIssueId = (args.length == 3 ? args[2] : "");
+			issueTrackerService.createIssue(args[1], parentIssueId);
+		} else if(applicationAction == ApplicationAction.UPDATE){
+			if(args.length != 3){
+				System.out.printf(ERROR_MESSAGE_NUMBER_OF_PARAMS, ERROR_MESSAGE_UPDATE_INPUT_INVALID);
+				return;
+			}
 			issueTrackerService.updateIssue(args[1], Status.findByName(args[2]));
+		} else{
+			System.out.println(ERROR_MESSAGE_FIRST_PARAM);
 		}
-
-
 	}
 }

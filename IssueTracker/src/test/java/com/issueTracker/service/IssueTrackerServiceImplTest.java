@@ -1,7 +1,7 @@
 package com.issueTracker.service;
 
 import com.issueTracker.model.Status;
-import com.issueTracker.repository.TicketRepository;
+import com.issueTracker.repository.IssueRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 public class IssueTrackerServiceImplTest {
     @Mock
-    TicketRepository ticketRepository;
+    IssueRepository issueRepository;
 
     @InjectMocks
     IssueTrackerServiceImpl issueTrackerServiceImplTest;
@@ -29,9 +29,22 @@ public class IssueTrackerServiceImplTest {
         issueTrackerServiceImplTest.getAllIssues(status);
 
         //THEN
-        verify(ticketRepository).getAllIssues();
-        verify(ticketRepository, never()).createIssue(any(), any());
-        verify(ticketRepository, never()).updateIssue(any(), any());
+        verify(issueRepository).getAllIssues();
+        verify(issueRepository, never()).createIssue(any(), any());
+        verify(issueRepository, never()).updateIssue(any(), any());
+    }
+
+    @Test
+    public void GIVEN_noStatus_WHEN_getAllIssues_THEN_noRepositoryMethodCalled() {
+        //GIVEN
+
+        //WHEN
+        issueTrackerServiceImplTest.getAllIssues(null);
+
+        //THEN
+        verify(issueRepository, never()).getAllIssues();
+        verify(issueRepository, never()).createIssue(any(), any());
+        verify(issueRepository, never()).updateIssue(any(), any());
     }
 
     @Test
@@ -44,9 +57,24 @@ public class IssueTrackerServiceImplTest {
         issueTrackerServiceImplTest.createIssue(description, parentIssueId);
 
         //THEN
-        verify(ticketRepository, never()).getAllIssues();
-        verify(ticketRepository).createIssue(description, parentIssueId);
-        verify(ticketRepository, never()).updateIssue(any(), any());
+        verify(issueRepository, never()).getAllIssues();
+        verify(issueRepository).createIssue(description, parentIssueId);
+        verify(issueRepository, never()).updateIssue(any(), any());
+    }
+
+    @Test
+    public void GIVEN_notANUmberAsIdAndDescription_WHEN_createIssue_THEN_noRepositoryMethodCalled() {
+        //GIVEN
+        String parentIssueId = "notNumber";
+        String description = "Mock description";
+
+        //WHEN
+        issueTrackerServiceImplTest.createIssue(description, parentIssueId);
+
+        //THEN
+        verify(issueRepository, never()).getAllIssues();
+        verify(issueRepository, never()).createIssue(any(), any());
+        verify(issueRepository, never()).updateIssue(any(), any());
     }
 
 
@@ -60,8 +88,37 @@ public class IssueTrackerServiceImplTest {
         issueTrackerServiceImplTest.updateIssue(id, status);
 
         //THEN
-        verify(ticketRepository, never()).getAllIssues();
-        verify(ticketRepository, never()).createIssue(any(), any());
-        verify(ticketRepository).updateIssue(id, status);
+        verify(issueRepository, never()).getAllIssues();
+        verify(issueRepository, never()).createIssue(any(), any());
+        verify(issueRepository).updateIssue(Integer.parseInt(id), status);
+    }
+
+    @Test
+    public void GIVEN_notANUmberAsIdAndStatus_WHEN_updateIssue_THEN_correctRepositoryMethodCalled() {
+        //GIVEN
+        String id = "notNumber";
+        Status status = Status.OPEN;
+
+        //WHEN
+        issueTrackerServiceImplTest.updateIssue(id, status);
+
+        //THEN
+        verify(issueRepository, never()).getAllIssues();
+        verify(issueRepository, never()).createIssue(any(), any());
+        verify(issueRepository, never()).updateIssue(any(), any());
+    }
+
+    @Test
+    public void GIVEN_idAndNoStatus_WHEN_updateIssue_THEN_correctRepositoryMethodCalled() {
+        //GIVEN
+        String id = "1";
+
+        //WHEN
+        issueTrackerServiceImplTest.updateIssue(id, null);
+
+        //THEN
+        verify(issueRepository, never()).getAllIssues();
+        verify(issueRepository, never()).createIssue(any(), any());
+        verify(issueRepository, never()).updateIssue(any(), any());
     }
 }

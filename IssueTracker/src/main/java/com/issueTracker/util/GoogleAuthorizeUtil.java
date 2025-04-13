@@ -45,7 +45,7 @@ public class GoogleAuthorizeUtil {
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("IsueTracker");
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("IssueTracker");
     }
 
 
