@@ -3,7 +3,9 @@ package com.issueTracker;
 import com.issueTracker.model.ApplicationAction;
 import com.issueTracker.model.Status;
 import com.issueTracker.service.IssueTrackerService;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +17,10 @@ public class IssueTrackerApplication implements CommandLineRunner {
 	@Autowired
 	IssueTrackerService issueTrackerService;
 
-    public static void main(String[] args) {
+	@Value("${google.spreadsheetId}")
+	private String spreadsheetId;
+
+	public static void main(String[] args) {
 		SpringApplication.run(IssueTrackerApplication.class, args);
 	}
 
@@ -25,6 +30,10 @@ public class IssueTrackerApplication implements CommandLineRunner {
 				"of the Issue to be updated and [Status] to update this Issue to." +
 				" List of valid Statuses is: %s", VALID_STATUS_LIST);
 
+		if(Strings.isBlank(spreadsheetId)){
+			System.out.println("Please read Readme and configure the application before use, SpreadsheetId not configured in application.properties");
+			return;
+		}
 
 		if(isInvalidNumberOfInputs(args) || isNotValidActionToPerform(args)){
 			return;
